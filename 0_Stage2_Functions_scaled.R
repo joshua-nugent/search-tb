@@ -92,22 +92,18 @@ Stage2 <- function(goal='aRR', weighting='clust', data.input,
 	  scale_value_min <- 0
 	}
 	data.input[,'Y'] <- (data.input[,'Y'] - scale_value_min) / (scale_value - scale_value_min)
-	#print(b)
-	
+
 	nIndv.string <- make.full.word( paste('nIndv', outcome, sep='_') )
 	names(data.input)[grep(nIndv.string, names(data.input) ) ] <- 'nIndv'
 
-	# if input survival probabilities, but the outcome is probability of badness (e.g. TB)
 	if(survival){
 		data.input$Y <- 1 - data.input$Y
-		print('Flipping outcome to be probability of badness')
+		print('Flipping outcome to be probability of bad outcome')
 	}
 	
 	# if haven't already, get weights 
 	if( sum(grep('alpha', colnames(data.input)))==0){
-	  #print("getting weights...")
 		data.input <-  get.weights(data.input, weighting=weighting)
-		#print("done got the weights...")
 	}
 
 

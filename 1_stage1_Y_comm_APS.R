@@ -4,14 +4,8 @@ library(SuperLearner)
 `%nin%` <- negate(`%in%`)
 source("0_helper_functions.R")
 
-risk_job_categories <- c("2","3","4","5","6","7","8","9","10","11","13","14","15","16","17","21","23")
-
 d0 <- readRDS("data/_cleaned_ind_data.rds") %>% 
   mutate(Afake = ifelse(as.numeric(community_num) %% 2 == 0, 1, 0),
-         risky_job_0 = ifelse(occupation_0 %in% risk_job_categories, 1, 0),
-         risky_job_3 = ifelse(occupation_3 %in% risk_job_categories, 1, 0),
-         risky_job_0_NA = as.numeric(is.na(occupation_0)),
-         risky_job_3_NA = as.numeric(is.na(occupation_3)),
          agecat0 = age_0 < 13,               # 12, +1 yr year for TB baseline
          agecat1 = age_0 >= 13 & age_0 < 19, # +1
          agecat2 = age_0 >= 19 & age_0 < 26, # +1
@@ -105,8 +99,8 @@ get_Yc_comm <- function(comm, d0, W, A, Y, SLL,
   print( "#### Getting Y num & ratio")
   
   data.temp0 <- d0 %>% filter(community_num %in% comm) %>% 
-    select(all_of(c(W, "S_1_Delta_0", "Y_0", "risky_job_3",
-                    "mobile_3", "Delta_1", "Y_1")))
+    select(all_of(c(W, "S_1_Delta_0", "Y_0",
+                    "Delta_1", "Y_1")))
   data.temp <- data.temp0 %>% drop_na
   
   output[1,"number_tested_FU"] <- sum(data.temp$Delta_1)
@@ -131,7 +125,7 @@ get_Yc_comm <- function(comm, d0, W, A, Y, SLL,
                                                       Lnodes = LN, Ynodes = 'Y_1',
                                                       abar = abar, SL.library = SLL, estimate.time = F,
                                                       stratify = T, variance.method = 'ic')))
-
+  print(est.temp$fit)
   output[1,"min_g_num"] <- min(est.temp$cum.g.unbounded)
   output[1,"min_g_q10_num"] <- quantile(est.temp$cum.g.unbounded, probs = .1, names = F)
   output[1,"P_Y0_0_and_Y1_1"] <- est.temp[["estimates"]][["tmle"]]

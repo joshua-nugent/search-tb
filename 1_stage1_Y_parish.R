@@ -5,25 +5,11 @@ library(SuperLearner)
 source("0_helper_functions.R")
 
 # See SAP here:
-# https://docs.google.com/document/d/1KnKoNzqt2q6VEPNfmJTmrt6gPYa2usZlrdnb9exPYpE/edit
-# Goal: Estimate a parish-specific new-infection rate that accounts for sampling and incomplete outcome ascertainment
-# Causal parameter is Prob (Y_1* = 1 | Y_0* = 0) = Prob(Y_1* = 1, Y_0* = 0) / Prob(Y_0* = 0)
-# Denominator: Prob(Y_0* = 0) = 1 - Prob(Y_0* = 1)
-# Statistical parameter:  E[E(Y_0 | Delta_0=1, S=1, W, W^c)]
-# W = c("agecat", "sex", "riskjob", "mobility")
-# W^c = housetype; probability of being sampled P(S = 1)
-# Numerator: Prob(Y_1*=1, Y_0*=0)
-# Ws: participant specific variables that could drive measurement of final TST and TB status
-# sex, age group, job/student... whatever else looks reasonable in the TB dataset 
+# https://arxiv.org/abs/2208.09508
 
-risk_job_categories <- c("2","3","4","5","6","7","8","9","10","11","13","14","15","16","17","21","23")
 
 d0 <- readRDS("data/_cleaned_ind_data.rds") %>% 
   mutate(Afake = ifelse(as.numeric(community_num) %% 2 == 0, 1, 0),
-         risky_job_0 = ifelse(occupation_0 %in% risk_job_categories, 1, 0),
-         risky_job_3 = ifelse(occupation_3 %in% risk_job_categories, 1, 0),
-         risky_job_0_NA = as.numeric(is.na(occupation_0)),
-         risky_job_3_NA = as.numeric(is.na(occupation_3)),
          agecat0 = age_0 < 13,               # 12, +1 yr year for TB baseline
          agecat1 = age_0 >= 13 & age_0 < 19, # +1
          agecat2 = age_0 >= 19 & age_0 < 26, # +1

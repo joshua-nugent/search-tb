@@ -9,17 +9,16 @@ source("0_helper_functions.R")
 
 #################################
 blind <- F
-#if(blind){
-#  A <- "Afake"
-#} else {
+if(blind){
+ A <- "Afake"
+} else {
 A <- "Areal"
-#}
+}
 #################################
 
-W <- c("hiv0", "alc0")#"tb0")#, "mob0", "hr0", "pphh", "nvill") # TB data not reliable.
+W <- c("hiv0", "alc0")
 Y <- "Y_final"
-SLL <- c("SL.mean", "SL.glm", "SL.earth")#, "SL.glmnet.9folds")
-#SLL <- c("SL.mean", "SL.glm", "SL.glmnet.9folds")
+SLL <- c("SL.mean", "SL.glm", "SL.earth")
 
 #############################################################################################
 #############################################################################################
@@ -30,10 +29,6 @@ dat <- left_join(readRDS("data/_parish_W_primary.rds"),
                                                             Afake = as.numeric(Afake)))
 plot_outcome(dat = dat, blind = F)
 do_tmle(dat = dat, W = W, A = A, Y = Y, SLL = SLL, cv_folds = 9, seed = 1)
-# Sensitive to the high outlier? Somewhat.
-do_tmle(dat = dat %>% filter(cp %nin% 282), W = W, A = A, Y = Y, SLL = SLL, seed = 1)
-# Sensitive to SL library? no... do_tmle(dat = dat, W = W, A = A, Y = Y, SLL = c("SL.mean", "SL.glm"))
-#do_tmle(dat = dat, W = W, A = A, Y = Y, SLL = SLL, gcomp = T) #do_tmle(dat = dat, W = W, A = A, Y = Y, SLL = SLL, iptw = T)
 
 #############################################################################################
 ###### Stratifications
@@ -226,6 +221,7 @@ plot_outcome(dat = dat, blind = F)
 do_tmle(dat = dat, W = W, A = A, Y = Y, SLL = SLL, seed = 1)
 
 # HIV people strat - neg
+set.seed(1)
 dat <- left_join(readRDS("data/_parish_W_primary.rds"),
                  readRDS("data/_Yc_unadjusted_hiv_neg_individual.rds") %>% mutate(Areal = as.numeric(Areal),
                                                                                   Afake = as.numeric(Afake)))
@@ -400,6 +396,7 @@ dat <- left_join(readRDS("data/_comm_APS_W.rds"),
 ############################ see "5_test_stage2.R" for more ###########
 source("0_Adapt_Functions_cvv.R")
 source("0_Stage2_Functions_scaled.R")
+set.seed(1)
 Stage2(weighting = "clust",
        goal = "aRR",
        data.input = dat,

@@ -5,8 +5,8 @@
 # Laura B. Balzer, PhD MPhil
 # lbalzer@umass.edu
 # Lead Statistician for SEARCH
+############################ Modified for SEARCH-IPT by Josh Nugent
 #---------------------------
-########################################### Modified for SEARCH-IPT by Josh Nugent
 
 #-----------------------------------------------------#-----------------------------------------------------
 # do.adaptive.prespec: function to implement adaptive prespecification as described in 

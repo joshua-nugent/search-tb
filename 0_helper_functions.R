@@ -34,19 +34,17 @@ get_Yc <- function(parish, d0, W, A, Y, SLL, ignore_S = F,
 
   print( "#### Getting Y denom")
   print(paste("n =", nrow(v1)))
-  #print(paste("number of NA =", nrow(v0) - nrow(v1)))
-  
+
   mod <- suppressWarnings(suppressMessages(ltmle(data = v1, SL.library = SLL,
                                                  Anodes = A, Ynodes = Y, estimate.time = F,
                                                  abar = 1, stratify = T)))
-  #print(summary(mod))
-  #print(mod$fit)
+
   output[1,"min_g_denom"] <- min(mod$cum.g.unbounded)
   output[1,"min_g_q10_denom"] <- quantile(mod$cum.g.unbounded, probs = .1, names = F)
-  #output[1,"max_g_denom"] <- max(mod$cum.g.unbounded)
   output[1,"Y0_1_est"] <- mod[["estimates"]][["tmle"]]
   output[1,"Y0_1_est_lo"] <- summary(mod)$treatment$CI[1]
   output[1,"Y0_1_est_hi"] <- summary(mod)$treatment$CI[2]
+
   ################## Denominator: Prob(Y_0* = 0) = 1 - Prob(Y_0* = 1)
   output[1,"P_Y0_0"] <- 1 - mod[["estimates"]][["tmle"]]
   
@@ -58,21 +56,19 @@ get_Yc <- function(parish, d0, W, A, Y, SLL, ignore_S = F,
 
   if(ignore_S){
     data.temp0 <- d0 %>% filter(cp %in% parish) %>% 
-      select(all_of(c(W, "Delta_0", "Y_0", "risky_job_3",
-                      "mobile_3", "Delta_1", "Y_1")))
+      select(all_of(c(W, "Delta_0", "Y_0",
+                      "Delta_1", "Y_1")))
   } else {
     data.temp0 <- d0 %>% filter(cp %in% parish) %>% 
-      select(all_of(c(W, "S_1_Delta_0", "Y_0", "risky_job_3",
-                      "mobile_3", "Delta_1", "Y_1")))
+      select(all_of(c(W, "S_1_Delta_0", "Y_0",
+                      "Delta_1", "Y_1")))
   }
   data.temp <- data.temp0 %>% drop_na
   
   output[1,"number_tested_FU"] <- sum(data.temp$Delta_1)
   
   print(paste("n =", nrow(data.temp)))
-  #print(paste("number of NA =", nrow(data.temp0) - nrow(data.temp)))
   abar <- matrix(nrow=nrow(data.temp), ncol=2)
-  
   
   if(ignore_S){
     abar[,1] <- 1
@@ -82,7 +78,7 @@ get_Yc <- function(parish, d0, W, A, Y, SLL, ignore_S = F,
                       "Delta_0", "Y_0",
                       "Delta_1", "Y_1")))
     
-    est.temp <- #suppressWarnings(suppressMessages(
+    est.temp <- 
       ltmle(data = data.temp,
             Anodes = c('Delta_0', 'Delta_1'),
             Lnodes = 'Y_0', Ynodes = 'Y_1',
@@ -104,9 +100,7 @@ get_Yc <- function(parish, d0, W, A, Y, SLL, ignore_S = F,
             stratify = T, variance.method = 'ic')#))
     
   }
-  #print(est.temp$fit)
-  #print(summary(est.temp$cum.g.unbounded))
-  #print(summary(est.temp))
+  print(est.temp$fit)
   output[1,"min_g_num"] <- min(est.temp$cum.g.unbounded)
   output[1,"min_g_q10_num"] <- quantile(est.temp$cum.g.unbounded, probs = .1, names = F)
   output[1,"P_Y0_0_and_Y1_1"] <- est.temp[["estimates"]][["tmle"]]
@@ -118,7 +112,6 @@ get_Yc <- function(parish, d0, W, A, Y, SLL, ignore_S = F,
                              mu0 = output[1,"P_Y0_0"],
                              IC1 = est.temp$IC$tmle,
                              IC0 = mod$IC$tmle)
-  #print(var_ratio$est)
   output[1,"Y_final_lo"] <- var_ratio$est$CI.lo
   output[1,"Y_final_hi"] <- var_ratio$est$CI.hi
   return(output)
