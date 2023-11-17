@@ -6,10 +6,10 @@ source("0_helper_functions.R")
 
 d0 <- readRDS("data/_cleaned_ind_data.rds") %>% 
   mutate(Afake = ifelse(as.numeric(community_num) %% 2 == 0, 1, 0),
-         agecat0 = age_0 < 13,               # 12, +1 yr year for TB baseline
-         agecat1 = age_0 >= 13 & age_0 < 19, # +1
-         agecat2 = age_0 >= 19 & age_0 < 26, # +1
-         agecat3 = age_0 >= 26,              # +1
+         agecat0 = age_0 < 11,               # 12, +1 yr year for TB baseline
+         agecat1 = age_0 >= 11 & age_0 < 17, # +1
+         agecat2 = age_0 >= 17 & age_0 < 24, # +1
+         agecat3 = age_0 >= 24,              # +1
          ht12 = house_type == 1 | house_type == 2,
          Delta_0 = as.numeric(tstpos != -9 & !is.na(tstpos)),
          Delta_1 = as.numeric(tstpos_yr2 != -9 & !is.na(tstpos_yr2)),
