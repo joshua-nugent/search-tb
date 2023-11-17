@@ -79,11 +79,11 @@ output <- do_Yc_all(dat = d0 %>% filter(sex_0 == 0), seed = 1)
 saveRDS(get_As(d0 = d0, output = output), file = "data/_Yc_women.rds")
 
 # age <12
-output <- do_Yc_all(dat = d0 %>% filter(agecat0), seed = 1)
+output <- do_Yc_all(dat = d0 %>% filter(age_0 < 11), seed = 1)
 saveRDS(get_As(d0 = d0, output = output), file = "data/_Yc_agecat0.rds")
 
 # age 12+
-output <- do_Yc_all(dat = d0 %>% filter(agecat1 | agecat2 | agecat3), seed = 1)
+output <- do_Yc_all(dat = d0 %>% filter(age_0 >= 11), seed = 1)
 saveRDS(get_As(d0 = d0, output = output), file = "data/_Yc_agecat123.rds")
 
 # by HIV HH status positive
